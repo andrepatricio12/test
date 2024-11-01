@@ -126,7 +126,26 @@
             <select id="disciplina" onchange="atualizarCampoNota()">
                 <!-- Lista das disciplinas -->
                 <option value="ADP">Administração de Pessoal (ADP)</option>
-                <!-- Outras opções omitidas para brevidade -->
+                <option value="ALF">Administração Logística Financeira (ALF)</option>
+                <option value="AMTP">Armamento, Munição e Tiro Policial (AMTP)</option>
+                <option value="APHT">Atendimento Pré-Hospitalar Tático (APH)</option>
+                <option value="CCL">Comando Chefia e Liderança (CCL)</option>
+                <option value="DPE">Defesa Pessoal Policial (DPE)</option>
+                <option value="DAD">Direito Administrativo Disciplinar (DAD)</option>
+                <option value="DPPM">Direito Penal Militar, Processual Penal Militar (DPPM)</option>
+                <option value="EFPM">Educação Física Policial Militar (EFPM)</option>
+                <option value="DDPH">Ética e Direitos Humanos na Atividade Policial (DDPH)</option>
+                <option value="GAO">Gerenciamento de Atividade Operacional (GAO)</option>
+                <option value="INP">Inteligência Policial (INP)</option>
+                <option value="LET">Legislação de Trânsito e Operações (LET)</option>
+                <option value="LEI">Legislação Institucional (LEI)</option>
+                <option value="OUD">Ordem Unida (OUD)</option>
+                <option value="PDP">Polícia de Proximidade (PDP)</option>
+                <option value="POS">Polícia Ostensiva (POS)</option>
+                <option value="SCOH">Sistema de Comando e Operações de Ajuda Humanitária (SCOH)</option>
+                <option value="TPO">Técnicas E Operações De Polícia Militar (TPO)</option>
+                <option value="TSP">Técnicas de sobrevivência Policial (TSP)</option>
+                <option value="TELA">Tópicos Especiais de Legislação Aplicáveis à Atividade (TEL)</option>
             </select>
         </div>
 
@@ -172,12 +191,12 @@
 <script>
     // Configuração do Firebase
     const firebaseConfig = {
-        apiKey: "SEU_API_KEY",
+        apiKey: "AIzaSyDEvCDdX0LGjDMFpyxljj-4JTjZKtgooDM",
         authDomain: "notas-cfs.firebaseapp.com",
         projectId: "notas-cfs",
         storageBucket: "notas-cfs.appspot.com",
-        messagingSenderId: "ID_MENSAGENS",
-        appId: "SEU_APP_ID"
+        messagingSenderId: "91086463856",
+        appId: "1:91086463856:web:6a16fb0b3abe04bbc425b5"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -185,7 +204,40 @@
 
     const alunos = {
         "9287027": "ELIENAR FARIAS",
-        // Adicione os demais alunos aqui
+        "9306820": "NAZARETH LIMA GOEDERT",
+        "9303219": "CARLA DE LUCA LINHARES",
+        "9287124": "LEANDRO GHELLERE",
+        "9300350": "TIAGO LUIZ CLEMES",
+        "9288350": "MARCOS AURÉLIO LUIZ DUARTE",
+        "9320547": "ANDRÉ LUIS PATRÍCIO",
+        "9288520": "MATHEUS ROSSI LONGO",
+        "9320555": "RICARDO MESQUITA DE MEDEIROS",
+        "9320601": "JOSÉ RENATO COSTA",
+        "9307800": "JEAN CARLOS PEREIRA MACHADO",
+        "9300600": "AILTON BOZELLO DE BITTENCOURT",
+        "9300341": "TIAGO SANTOS DE SOUZA",
+        "9316230": "RODRIGO SILVA DOS SANTOS",
+        "9308652": "ANDERSON ROVEDA",
+        "9333967": "MAYARA ZILI DA SILVA",
+        "9316221": "MARCOS ADRIANO DAL PONT",
+        "9333860": "SARAH WAGNER ZANATTA",
+        "9329730": "FELIPE LUMERTZ DA SILVA",
+        "9316116": "JAQUES ROCHA DE SOUZA",
+        "9329340": "ÉZIO FRANCISCO FERNANDES",
+        "9329382": "EDERSON FRANÇA DE MACHADO",
+        "6606032": "ROBSON GOMES HAHN",
+        "9339558": "EVANDRO ANASTÁCIO TEIXEIRA",
+        "9339329": "TIAGO ANSELMO VALNIER",
+        "9287205": "ALEXANDRE DA LUZ",
+        "9307745": "WANDERSON RICARDO DE CARVALHO",
+        "9316159": "ANDERSON DOS SANTOS ROSA",
+        "9320563": "IURI CÚRCIO CARRER",
+        "6718680": "LAURO TOGNON NETO",
+        "9330097": "PATRICK CARDOSO DE RAMOS",
+        "9330356": "BRUNA DA SILVA PIRES",
+        "3847446": "DAIANA PEREIRA",
+        "9329056": "VINICIUS JOVELINO COSTA",
+        "9339477": "DANIEL SERAFIM PESSI"
     };
 
     let matriculaAtual = "";
