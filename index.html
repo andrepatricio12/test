@@ -282,16 +282,24 @@
     }
 
     function carregarNotas() {
-        db.collection("alunos").doc(matriculaAtual).get()
-        .then(doc => {
+        const alunoRef = db.collection("alunos").doc(matriculaAtual);
+        alunoRef.get().then((doc) => {
             if (doc.exists) {
-                notasSalvas = doc.data();
-                atualizarNotasSalvas();
-                atualizarMedia();
+                const data = doc.data();
+                document.getElementById('notas-list').innerHTML = '';
+                for (const disciplina in data) {
+                    if (disciplina !== 'nome' && disciplina !== 'mostrarRanking') {
+                        const nota = data[disciplina];
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${disciplina}: ${nota}`;
+                        document.getElementById('notas-list').appendChild(listItem);
+                    }
+                }
+            } else {
+                console.log("Nenhuma nota salva para este aluno.");
             }
-        })
-        .catch(error => {
-            console.error("Erro ao carregar notas:", error);
+        }).catch((error) => {
+            console.error("Erro ao carregar as notas:", error);
         });
     }
 
@@ -333,9 +341,10 @@
         document.getElementById('media-value').textContent = media;
     }
 
-    function toggleRankingButton() {
+    nction toggleRankingButton() {
+        const checkbox = document.getElementById('showInRankingCheckbox');
         const rankingButton = document.getElementById('rankingButton');
-        if (document.getElementById('showInRankingCheckbox').checked) {
+        if (checkbox.checked) {
             rankingButton.disabled = false;
             rankingButton.style.opacity = 1;
         } else {
