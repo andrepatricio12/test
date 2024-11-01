@@ -327,29 +327,59 @@
         rankingButton.style.opacity = rankingButton.disabled ? 0.5 : 1;
     }
 
-    function mostrarRanking() {
-        const rankingContainer = document.getElementById('ranking-container');
-        const rankingList = document.getElementById('ranking-list');
-        rankingList.innerHTML = '';
+    <script>
+    // Função para mostrar o ranking com a contagem de notas
+    async function mostrarRanking() {
+        const rankingContainer = document.getElementById('ranking-list');
+        rankingContainer.innerHTML = '';
 
-        db.collection("alunos").where("mostrarRanking", "==", true).get()
-            .then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const media = Object.values(data)
-                        .filter(v => typeof v === 'number')
-                        .reduce((acc, val, _, arr) => acc + val / arr.length, 0)
-                        .toFixed(2);
-                    const li = document.createElement('li');
-                    li.textContent = `${data.nome}: Média ${media}`;
-                    rankingList.appendChild(li);
-                });
-                rankingContainer.classList.remove('hidden');
+        try {
+            const querySnapshot = await db.collection("alunos").get();
+            const rankingData = [];
+
+            querySnapshot.forEach(doc => {
+                const alunoData = doc.data();
+                if (alunoData.exibirNomeNoRanking) {
+                    let totalNotas = 0;
+                    let somaNotas = 0;
+                    let contagemNotas = 0;
+
+                    // Calcular a soma e contagem de notas para média
+                    for (const disciplina in alunoData.notas) {
+                        const nota = alunoData.notas[disciplina];
+                        somaNotas += nota;
+                        contagemNotas++;
+                    }
+
+                    const media = contagemNotas > 0 ? (somaNotas / contagemNotas).toFixed(2) : 0;
+                    rankingData.push({
+                        nome: alunoData.nome,
+                        media: parseFloat(media),
+                        contagemNotas: contagemNotas
+                    });
+                }
             });
+
+            // Ordenar o ranking pela média em ordem decrescente
+            rankingData.sort((a, b) => b.media - a.media);
+
+            // Exibir o ranking com média e contagem de notas
+            rankingData.forEach((aluno, index) => {
+                const alunoItem = document.createElement('li');
+                alunoItem.textContent = `${index + 1}. ${aluno.nome} - Média: ${aluno.media} (Notas Salvas: ${aluno.contagemNotas})`;
+                rankingContainer.appendChild(alunoItem);
+            });
+
+            document.getElementById('ranking-container').classList.remove('hidden');
+        } catch (error) {
+            console.error("Erro ao carregar o ranking:", error);
+        }
     }
 
+    // Função para ocultar o ranking
     function ocultarRanking() {
         document.getElementById('ranking-container').classList.add('hidden');
+    
     }
 
     function atualizarCampoNota() {
