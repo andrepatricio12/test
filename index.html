@@ -331,32 +331,6 @@
         const rankingContainer = document.getElementById('ranking-list');
         rankingContainer.innerHTML = '';
 
-        try {
-            const querySnapshot = await db.collection("alunos").get();
-            const rankingData = [];
-
-            querySnapshot.forEach(doc => {
-                const alunoData = doc.data();
-                if (alunoData.exibirNomeNoRanking) {
-                    let totalNotas = 0;
-                    let somaNotas = 0;
-                    let contagemNotas = 0;
-
-                    // Calcular a soma e contagem de notas para média
-                    for (const disciplina in alunoData.notas) {
-                        const nota = alunoData.notas[disciplina];
-                        somaNotas += nota;
-                        contagemNotas++;
-                    }
-
-                    const media = contagemNotas > 0 ? (somaNotas / contagemNotas).toFixed(2) : 0;
-                    rankingData.push({
-                        nome: alunoData.nome,
-                        media: parseFloat(media),
-                        contagemNotas: contagemNotas
-                    });
-                }
-            });
 
             // Ordenar o ranking pela média em ordem decrescente
             rankingData.sort((a, b) => b.media - a.media);
