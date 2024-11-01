@@ -105,9 +105,9 @@
             border-radius: 5px;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-
+    <!-- Firebase SDK (compatível com navegadores) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="container">
@@ -330,6 +330,7 @@
                 notasList.appendChild(li);
             }
         }
+    }
 
     function calcularMedia() {
         let soma = 0;
@@ -360,54 +361,23 @@
         }
     }
 
-   async function mostrarRanking() {
-    const rankingList = document.getElementById('ranking-list');
-    rankingList.innerHTML = ""; // Limpa o ranking antes de atualizá-lo
+    function mostrarRanking() {
+        db.collection("alunos").where("mostrarRanking", "==", true).get().then((querySnapshot) => {
+            let rankingList = document.getElementById('ranking-list');
+            rankingList.innerHTML = ''; // Limpa a lista antes de adicionar o ranking
+            let alunosRanking = [];
 
-    const alunosRef = db.collection("alunos");
-    const snapshot = await alunosRef.get();
-    const rankingData = [];
+            querySnapshot.forEach((doc) => {
+                const alunoData = doc.data();
+                let soma = 0;
+                let count = 0;
 
-    snapshot.forEach(doc => {
-        const alunoData = doc.data();
-        const nome = alunoData.nome;
-        const notas = alunoData.notas || {};
-        
-        // Calcula a média e conta o número de notas
-        let somaNotas = 0;
-        let quantidadeNotas = 0;
-        
-        for (const disciplina in notas) {
-            somaNotas += notas[disciplina];
-            quantidadeNotas++;
-        }
-
-        if (quantidadeNotas > 0) {
-            const media = somaNotas / quantidadeNotas;
-            rankingData.push({
-                nome,
-                media,
-                quantidadeNotas
-        }
-    });
-
-    // Ordena o ranking pela média de forma decrescente
-    rankingData.sort((a, b) => b.media - a.media);
-
-    // Exibe o ranking com o número de notas salvas
-    rankingData.forEach((aluno, index) => {
-        const alunoElement = document.createElement("li");
-        alunoElement.textContent = `${index + 1}. ${aluno.nome} - Média: ${aluno.media.toFixed(2)} (Notas Salvas: ${aluno.quantidadeNotas})`;
-        rankingList.appendChild(alunoElement);
-    });
-
-    document.getElementById('ranking-container').classList.remove('hidden');
-}
-
-function ocultarRanking() {
-    document.getElementById('ranking-container').classList.add('hidden');
-}
-
+                for (const disciplina in alunoData) {
+                    if (disciplina !== 'nome' && disciplina !== 'mostrarRanking') {
+                        soma += alunoData[disciplina];
+                        count++;
+                    }
+                }
 
                 const media = count > 0 ? soma / count : 0;
                 alunosRanking.push({ nome: alunoData.nome, media });
@@ -424,12 +394,6 @@ function ocultarRanking() {
             document.getElementById('ranking-container').classList.remove('hidden');
         });
     }
-    function toggleRankingButton() {
-    const rankingCheckbox = document.getElementById('showInRankingCheckbox');
-    const rankingButton = document.getElementById('rankingButton');
-    rankingButton.disabled = !rankingCheckbox.checked;
-    rankingButton.style.opacity = rankingCheckbox.checked ? 1 : 0.5;
-}
 
     function ocultarRanking() {
         document.getElementById('ranking-container').classList.add('hidden');
