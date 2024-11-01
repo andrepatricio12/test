@@ -330,7 +330,6 @@
                 notasList.appendChild(li);
             }
         }
-    }
 
     function calcularMedia() {
         let soma = 0;
@@ -389,7 +388,6 @@
                 nome,
                 media,
                 quantidadeNotas
-            });
         }
     });
 
@@ -426,6 +424,12 @@ function ocultarRanking() {
             document.getElementById('ranking-container').classList.remove('hidden');
         });
     }
+    function toggleRankingButton() {
+    const rankingCheckbox = document.getElementById('showInRankingCheckbox');
+    const rankingButton = document.getElementById('rankingButton');
+    rankingButton.disabled = !rankingCheckbox.checked;
+    rankingButton.style.opacity = rankingCheckbox.checked ? 1 : 0.5;
+}
 
     function ocultarRanking() {
         document.getElementById('ranking-container').classList.add('hidden');
