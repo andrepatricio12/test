@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Notas - Curso de Sargentos</title>
     <style>
-        /* Estilos gerais */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -81,14 +80,8 @@
         .spacing {
             margin-top: 10px;
         }
-        .message span {
-            font-weight: bold;
-        }
         #rankingButton {
             opacity: 0.5;
-        }
-        #notas-salvas {
-            margin-top: 20px;
         }
         #notas-salvas ul {
             list-style-type: none;
@@ -165,7 +158,6 @@
             <button class="button-small" onclick="excluirNota()">Excluir Nota</button>
         </div>
 
-        <div id="notas-container" class="message"></div>
         <div class="message hidden" id="nota-success">Nota salva com sucesso!</div>
         <div class="error hidden" id="nota-error">A nota deve estar entre 0 e 10.</div>
 
@@ -189,8 +181,7 @@
 </div>
 
 <script>
-    // Configuração do Firebase
-    const firebaseConfig = {
+   const firebaseConfig = {
         apiKey: "AIzaSyDEvCDdX0LGjDMFpyxljj-4JTjZKtgooDM",
         authDomain: "notas-cfs.firebaseapp.com",
         projectId: "notas-cfs",
@@ -202,8 +193,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const alunos = {
-        "9287027": "ELIENAR FARIAS",
+     "9287027": "ELIENAR FARIAS",
         "9306820": "NAZARETH LIMA GOEDERT",
         "9303219": "CARLA DE LUCA LINHARES",
         "9287124": "LEANDRO GHELLERE",
@@ -238,6 +228,7 @@
         "3847446": "DAIANA PEREIRA",
         "9329056": "VINICIUS JOVELINO COSTA",
         "9339477": "DANIEL SERAFIM PESSI"
+    
     };
 
     let matriculaAtual = "";
@@ -282,79 +273,115 @@
                 document.getElementById('nota-success').classList.add('hidden');
             }, 2000);
             carregarNotas();
+        })
+        .catch(error => {
+            console.error("Erro ao salvar a nota:", error);
+        });
+    }
+
+    function carregarNotas() {
+        db.collection("alunos").doc(matriculaAtual).get()
+        .then(doc => {
+            if (doc.exists) {
+                notasSalvas = doc.data();
+                atualizarNotasSalvas();
+                atualizarMedia();
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao carregar notas:", error);
         });
     }
 
     function excluirNota() {
         const disciplina = document.getElementById('disciplina').value;
-        const alunoRef = db.collection("alunos").doc(matriculaAtual);
-
-        alunoRef.update({
+        db.collection("alunos").doc(matriculaAtual).update({
             [disciplina]: firebase.firestore.FieldValue.delete()
         })
         .then(() => {
             carregarNotas();
+        })
+        .catch(error => {
+            console.error("Erro ao excluir a nota:", error);
         });
     }
 
-    function carregarNotas() {
-        const alunoRef = db.collection("alunos").doc(matriculaAtual);
-        alunoRef.get().then((doc) => {
-            if (doc.exists) {
-                notasSalvas = doc.data();
-                document.getElementById('notas-list').innerHTML = '';
-                for (const [disciplina, nota] of Object.entries(notasSalvas)) {
-                    if (disciplina !== "nome" && disciplina !== "mostrarRanking") {
-                        const li = document.createElement('li');
-                        li.textContent = `${disciplina}: ${nota}`;
-                        document.getElementById('notas-list').appendChild(li);
-                    }
-                }
-                calcularMedia();
+    function atualizarNotasSalvas() {
+        const notasList = document.getElementById('notas-list');
+        notasList.innerHTML = "";
+        for (let [disciplina, nota] of Object.entries(notasSalvas)) {
+            if (disciplina !== "nome" && disciplina !== "mostrarRanking") {
+                let li = document.createElement('li');
+                li.textContent = `${disciplina}: ${nota}`;
+                notasList.appendChild(li);
+            }
+        }
     }
 
-    function calcularMedia() {
-        const notas = Object.values(notasSalvas).filter(n => typeof n === 'number');
-        const media = notas.length ? (notas.reduce((acc, nota) => acc + nota, 0) / notas.length).toFixed(2) : "N/A";
+    function atualizarMedia() {
+        let total = 0;
+        let count = 0;
+        for (let [disciplina, nota] of Object.entries(notasSalvas)) {
+            if (disciplina !== "nome" && disciplina !== "mostrarRanking") {
+                total += nota;
+                count++;
+            }
+        }
+        const media = count > 0 ? (total / count).toFixed(2) : 0;
         document.getElementById('media-value').textContent = media;
     }
 
     function toggleRankingButton() {
         const rankingButton = document.getElementById('rankingButton');
-        rankingButton.disabled = !document.getElementById('showInRankingCheckbox').checked;
-        rankingButton.style.opacity = rankingButton.disabled ? 0.5 : 1;
-    }
-    // Função para mostrar o ranking com a contagem de notas
-    async function mostrarRanking() {
-        const rankingContainer = document.getElementById('ranking-list');
-        rankingContainer.innerHTML = '';
-
-
-            // Ordenar o ranking pela média em ordem decrescente
-            rankingData.sort((a, b) => b.media - a.media);
-
-            // Exibir o ranking com média e contagem de notas
-            rankingData.forEach((aluno, index) => {
-                const alunoItem = document.createElement('li');
-                alunoItem.textContent = `${index + 1}. ${aluno.nome} - Média: ${aluno.media} (Notas Salvas: ${aluno.contagemNotas})`;
-                rankingContainer.appendChild(alunoItem);
-            });
-
-            document.getElementById('ranking-container').classList.remove('hidden');
-        } catch (error) {
-            console.error("Erro ao carregar o ranking:", error);
+        if (document.getElementById('showInRankingCheckbox').checked) {
+            rankingButton.disabled = false;
+            rankingButton.style.opacity = 1;
+        } else {
+            rankingButton.disabled = true;
+            rankingButton.style.opacity = 0.5;
         }
     }
 
-    // Função para ocultar o ranking
+    function mostrarRanking() {
+        document.getElementById('ranking-container').classList.remove('hidden');
+        db.collection("alunos").where("mostrarRanking", "==", true).get()
+        .then(querySnapshot => {
+            const rankingList = document.getElementById('ranking-list');
+            rankingList.innerHTML = "";
+            let alunos = [];
+            querySnapshot.forEach(doc => {
+                const aluno = doc.data();
+                let media = 0;
+                let count = 0;
+                for (let nota in aluno) {
+                    if (nota !== "nome" && nota !== "mostrarRanking") {
+                        media += aluno[nota];
+                        count++;
+                    }
+                }
+                media = (count > 0) ? (media / count).toFixed(2) : 0;
+                alunos.push({ nome: aluno.nome, media });
+            });
+
+            alunos.sort((a, b) => b.media - a.media);
+            alunos.forEach(aluno => {
+                const div = document.createElement('div');
+                div.textContent = `${aluno.nome} - Média: ${aluno.media}`;
+                rankingList.appendChild(div);
+            });
+        })
+        .catch(error => {
+            console.error("Erro ao carregar ranking:", error);
+        });
+    }
+
     function ocultarRanking() {
         document.getElementById('ranking-container').classList.add('hidden');
-    
     }
 
     function atualizarCampoNota() {
         const disciplina = document.getElementById('disciplina').value;
-        document.getElementById('nota').value = notasSalvas[disciplina] || '';
+        document.getElementById('nota').value = notasSalvas[disciplina] || "";
     }
 </script>
 </body>
